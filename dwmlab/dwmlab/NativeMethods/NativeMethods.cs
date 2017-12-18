@@ -124,7 +124,7 @@ namespace Pacman
         public static extern bool GetCursorPos(out POINT lpPoint);
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern bool GetWindowRect(IntPtr hwnd, out RECT lpRect);
+        public static extern bool GetWindowRect(IntPtr hwnd, ref RECT lpRect);
 
         #region DWM
         // Default window procedure for Desktop Window Manager (DWM) hit-testing within the non-client area.
