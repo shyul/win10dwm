@@ -993,6 +993,35 @@ namespace Pacman
         public static IntPtr LOCAL_MACHINE = new IntPtr(0x80000002);
         public static IntPtr USERS = new IntPtr(0x80000003);
     }
+    public static class NCHITTEST
+    {
+        public static IntPtr ERROR = new IntPtr(-2);
+        public static IntPtr TRANSPARENT = new IntPtr(-1);
+        public static IntPtr NOWHERE = new IntPtr(0);
+        public static IntPtr CLIENT = new IntPtr(1);
+        public static IntPtr CAPTION = new IntPtr(2);
+        public static IntPtr SYSMENU = new IntPtr(3);
+        public static IntPtr GROWBOX = new IntPtr(4);
+        public static IntPtr SIZE = new IntPtr(4);
+        public static IntPtr MENU = new IntPtr(5);
+        public static IntPtr HSCROLL = new IntPtr(6);
+        public static IntPtr VSCROLL = new IntPtr(7);
+        public static IntPtr REDUCE = new IntPtr(8);
+        public static IntPtr MINBUTTON = new IntPtr(8);
+        public static IntPtr ZOOM = new IntPtr(9);
+        public static IntPtr MAXBUTTON = new IntPtr(9);
+        public static IntPtr LEFT = new IntPtr(10);
+        public static IntPtr RIGHT = new IntPtr(11);
+        public static IntPtr TOP = new IntPtr(12);
+        public static IntPtr TOPLEFT = new IntPtr(13);
+        public static IntPtr TOPRIGHT = new IntPtr(14);
+        public static IntPtr BOTTOM = new IntPtr(15); // In the lower-horizontal border of a resizable window (the user can click the mouse to resize the window vertically).
+        public static IntPtr BOTTOMLEFT = new IntPtr(16); // In the lower-left corner of a border of a resizable window (the user can click the mouse to resize the window diagonally).
+        public static IntPtr BOTTOMRIGHT = new IntPtr(17);
+        public static IntPtr BORDER = new IntPtr(18); // In the border of a window that does not have a sizing border.
+        public static IntPtr CLOSE = new IntPtr(20);
+        public static IntPtr HELP = new IntPtr(21);
+    }
     public static class WindowStyles
     {
         public const uint OVERLAPPED = 0x00000000;
@@ -1257,35 +1286,6 @@ namespace Pacman
         /// Preferred blt alignment
         /// </summary>
         public const int BLTALIGNMENT = 119;
-    }
-    public static class NCHITTEST
-    {
-        public const int ERROR = -2;
-        public const int TRANSPARENT = -1;
-        public const int NOWHERE = 0;
-        public const int CLIENT = 1;
-        public const int CAPTION = 2;
-        public const int SYSMENU = 3;
-        public const int GROWBOX = 4;
-        public const int SIZE = 4;
-        public const int MENU = 5;
-        public const int HSCROLL = 6;
-        public const int VSCROLL = 7;
-        public const int REDUCE = 8;
-        public const int MINBUTTON = 8;
-        public const int ZOOM = 9;
-        public const int MAXBUTTON = 9;
-        public const int LEFT = 10;
-        public const int RIGHT = 11;
-        public const int TOP = 12;
-        public const int TOPLEFT = 13;
-        public const int TOPRIGHT = 14;
-        public const int BOTTOM = 15; // In the lower-horizontal border of a resizable window (the user can click the mouse to resize the window vertically).
-        public const int BOTTOMLEFT = 16; // In the lower-left corner of a border of a resizable window (the user can click the mouse to resize the window diagonally).
-        public const int BOTTOMRIGHT = 17;
-        public const int BORDER = 18; // In the border of a window that does not have a sizing border.
-        public const int CLOSE = 20;
-        public const int HELP = 21;
     }
     public static class DrawText
     {

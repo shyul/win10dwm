@@ -537,6 +537,22 @@ namespace NcRenderer
         {
             switch (m.Msg)
             {
+                case WM_CREATE:
+                    {
+                        //GetFrameSize();
+                        FrameChanged();
+                        m.Result = MSG_HANDLED;
+                        base.WndProc(ref m);
+                        break;
+                    }
+                case WM_DWMCOMPOSITIONCHANGED:
+                case WM_ACTIVATE:
+                    {
+                        DwmExtendFrameIntoClientArea(this.Handle, ref _tMargins);
+                        m.Result = MSG_HANDLED;
+                        base.WndProc(ref m);
+                        break;
+                    }
                 case WM_PAINT:
                     {
                         PAINTSTRUCT ps = new PAINTSTRUCT();
@@ -556,14 +572,7 @@ namespace NcRenderer
                         }
                         break;
                     }
-                case WM_CREATE:
-                    {
-                        //GetFrameSize();
-                        FrameChanged();
-                        m.Result = MSG_HANDLED;
-                        base.WndProc(ref m);
-                        break;
-                    }
+
                 case WM_NCCALCSIZE:
                     {
                         if (m.WParam != IntPtr.Zero && m.Result == IntPtr.Zero)
@@ -613,14 +622,7 @@ namespace NcRenderer
                             base.WndProc(ref m);
                         break;
                     }
-                case WM_DWMCOMPOSITIONCHANGED:
-                case WM_ACTIVATE:
-                    {
-                        DwmExtendFrameIntoClientArea(this.Handle, ref _tMargins);
-                        m.Result = MSG_HANDLED;
-                        base.WndProc(ref m);
-                        break;
-                    }
+
                 default:
                     {
                         base.WndProc(ref m);

@@ -109,6 +109,16 @@ namespace Pacman
         public static extern bool EndPaint(IntPtr hWnd, ref PAINTSTRUCT ps);
 
         [DllImport("user32.dll")]
+        public static extern int FillRect(IntPtr hDC, [In] ref RECT lprc, IntPtr hbr);
+
+        [DllImport("gdi32.dll")]
+        public static extern IntPtr GetStockObject(int fnObject);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool GetClientRect(IntPtr hWnd, ref RECT r);
+
+        [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool RedrawWindow(IntPtr hWnd, [In] ref RECT lprcUpdate, IntPtr hrgnUpdate, uint flags);
 
@@ -129,7 +139,8 @@ namespace Pacman
         #region DWM
         // Default window procedure for Desktop Window Manager (DWM) hit-testing within the non-client area.
         [DllImport("dwmapi.dll")]
-        public static extern int DwmDefWindowProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, out IntPtr result);
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool DwmDefWindowProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref IntPtr result);
 
         // Obtains a value that indicates whether Desktop Window Manager (DWM) composition is enabled.
         [DllImport("dwmapi.dll")]
