@@ -10,13 +10,19 @@ using System.Diagnostics;
 namespace NcRenderer
 {
     public partial class Form1 : Form
-    {
+    {        
+        // frame
+        private const int FRAME_WIDTH = 8;
+        private const int CAPTION_HEIGHT = 31;
+        private const int FRAME_SMWIDTH = 4;
+        private const int CAPTION_SMHEIGHT = 24;
+
         public Form1()
         {
-            ExtendMargins(0, 32, 0, 0, true, true);
+            ExtendMargins(0, 31, 0, 0, true, true);
             DoubleBuffered = true;
             SetStyle(ControlStyles.ResizeRedraw, true);
-            this.ControlBox = false;
+            //this.ControlBox = false;
             //this.Text = String.Empty;
             InitializeComponent();
 
@@ -78,11 +84,7 @@ namespace NcRenderer
         private const int RDW_ERASENOW = 0x0200;
         private const int RDW_FRAME = 0x0400;
         private const int RDW_NOFRAME = 0x0800;
-        // frame
-        private const int FRAME_WIDTH = 8;
-        private const int CAPTION_HEIGHT = 30;
-        private const int FRAME_SMWIDTH = 4;
-        private const int CAPTION_SMHEIGHT = 24;
+
         // misc
         private const int WM_SYSCOMMAND = 0x112;
         private const int SC_RESTORE = 0xF120;

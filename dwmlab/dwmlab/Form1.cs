@@ -18,13 +18,15 @@ namespace Pacman
             DoubleBuffered = true;
             SetStyle(ControlStyles.ResizeRedraw, true);
             InitializeComponent();
+
+            Console.WriteLine(SystemInformation.CaptionHeight);
         }
 
         protected override void OnPaint(PaintEventArgs pe)
         {
             Graphics g = pe.Graphics;
             g.FillRectangle(new SolidBrush(Color.Wheat), ClientRectangle);
-            g.DrawLine(Pens.Green, 0, 0, Width - 1, Height - 1);
+            g.DrawLine(Pens.Green, ClientRectangle.Left, ClientRectangle.Top, ClientRectangle.Right, ClientRectangle.Bottom);
             g.DrawString("I am on the title bar!", new Font("Tahoma", 10, FontStyle.Bold), Brushes.Gray, 0, 4);
             //g.FillEllipse(Brushes.Black, this.Width - 40, this.Height - 40, 80, 80);
         }
@@ -78,8 +80,8 @@ namespace Pacman
                     if (m.WParam != IntPtr.Zero && m.Result == IntPtr.Zero)
                     {
                         NCCALCSIZE_PARAMS nc = (NCCALCSIZE_PARAMS)Marshal.PtrToStructure(m.LParam, typeof(NCCALCSIZE_PARAMS));
-                        nc.rect0.Top -= 31;
-                       // nc.rect1 = nc.rect0;
+                        nc.rect0.Top -= SystemInformation.CaptionHeight + 8;// SystemInformation.CaptionHeight + 1;
+                        nc.rect1 = nc.rect0;
                         Marshal.StructureToPtr(nc, m.LParam, false);
                         m.Result = MSG_HANDLED;// (IntPtr)WVR_VALIDRECTS;
                     }
