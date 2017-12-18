@@ -9,8 +9,23 @@ using System.Diagnostics;
 // v1.3
 namespace NcRenderer
 {
+    public class TPanel : Panel
+    {
+        public TPanel()
+        {
+            SetStyle(ControlStyles.SupportsTransparentBackColor, true);
+            SetStyle(ControlStyles.ResizeRedraw, true);
+            DoubleBuffered = true;
+            BackColor = Color.Transparent;
+            Dock = DockStyle.Top;
+            Size = new Size(100, 26);
+        }
+
+    }
+
     public partial class Form1 : Form
-    {        
+    {
+        // TPanel tp1 = new TPanel();
         // frame
         private const int FRAME_WIDTH = 8;
         private const int CAPTION_HEIGHT = 31;
@@ -19,12 +34,13 @@ namespace NcRenderer
 
         public Form1()
         {
-            ExtendMargins(0, 31, 0, 0, true, true);
             DoubleBuffered = true;
             SetStyle(ControlStyles.ResizeRedraw, true);
+
             //this.ControlBox = false;
             //this.Text = String.Empty;
             InitializeComponent();
+            //Controls.Add(tp1);
 
             Console.WriteLine("SystemInformation.CaptionHeight = " + SystemInformation.CaptionHeight);
             Console.WriteLine("SystemInformation.BorderSize.Height = " + SystemInformation.BorderSize.Height);
@@ -39,6 +55,8 @@ namespace NcRenderer
         {
             ncToolStrip.BackColor = Color.Black;
 
+            ncToolStrip.Renderer = new NcRenderer();
+            /*
             if (IsCompatableOS() && IsAero())
             {
                 ncToolStrip.Renderer = new NcRenderer();
@@ -47,17 +65,17 @@ namespace NcRenderer
             {
                 ncToolStrip.Dock = DockStyle.Top;
                 this.Height += 24;
-            }
+            }*/
 
             this.MinimumSize = new Size(ncToolStrip.Width + 130, 0);
         }
-        
+
         private void button1_Click(object sender, EventArgs e)
         {
             Form2 f = new Form2();
             f.Show();
         }
-       
+
         private void button2_Click(object sender, EventArgs e)
         {
             Form3 f = new Form3();
@@ -307,18 +325,18 @@ namespace NcRenderer
 
         #region Fields
         private bool _bPaintWindow = false;
-        private bool _bDrawCaption = false;
-        private bool _bIsCompatible = true;
-        private bool _bIsAero = false;
+        //private bool _bDrawCaption = false;
+        //private bool _bIsCompatible = true;
+        //private bool _bIsAero = false;
         private bool _bPainting = false;
-        private bool _bExtendIntoFrame = false;
+        //private bool _bExtendIntoFrame = false;
         private int _iCaptionHeight = CAPTION_HEIGHT;
         private int _iFrameHeight = FRAME_WIDTH;
         private int _iFrameWidth = FRAME_WIDTH;
         private int _iFrameOffset = 100;
         private int _iStoreHeight = 0;
         private RECT _tClientRect = new RECT();
-        private MARGINS _tMargins = new MARGINS();
+        private MARGINS _tMargins = new MARGINS(0, 0, 62, 0);
         private RECT[] _tButtonSize = new RECT[3];
         #endregion
 
@@ -340,36 +358,6 @@ namespace NcRenderer
         #endregion
 
         #region Methods
-        private void ExtendMargins(int left, int top, int right, int bottom, bool drawcaption, bool intoframe)
-        {
-            // any negative value causes whole window client to extend
-            if (left < 0 || top < 0 || right < 0 || bottom < 0)
-            {
-                _bPaintWindow = true;
-                _tMargins.cyTopHeight = -1;
-            }
-            // only caption can be extended
-            else if (intoframe)
-            {
-                _tMargins.cxLeftWidth = 0;
-                _tMargins.cyTopHeight = top;
-                _tMargins.cxRightWidth = 0;
-                _tMargins.cyBottomHeight = 0;
-            }
-            // normal extender
-            else
-            {
-                _tMargins.cxLeftWidth = left;
-                _tMargins.cyTopHeight = top;
-                _tMargins.cxRightWidth = right;
-                _tMargins.cyBottomHeight = bottom;
-            }
-            _bExtendIntoFrame = intoframe;
-            _bDrawCaption = drawcaption;
-            _bIsCompatible = IsCompatableOS();
-            _bIsAero = IsAero();
-        }
-
         private void GetFrameSize()
         {
             if (this.MinimizeBox)
@@ -483,6 +471,7 @@ namespace NcRenderer
             return HIT_CONSTANTS.HTCLIENT;
         }
 
+        /*
         public bool IsAero()
         {
             int enabled = 0;
@@ -493,7 +482,7 @@ namespace NcRenderer
         public bool IsCompatableOS()
         {
             return (Environment.OSVersion.Version.Major >= 6);
-        }
+        }*/
 
         private void FrameChanged()
         {
@@ -516,37 +505,19 @@ namespace NcRenderer
         {
             RECT clientRect = new RECT();
             GetClientRect(this.Handle, ref clientRect);
-            if (_bExtendIntoFrame)
-            {
-                clientRect.Left = _tClientRect.Left - _tMargins.cxLeftWidth;
-                clientRect.Top = _tMargins.cyTopHeight;
-                clientRect.Right -= _tMargins.cxRightWidth;
-                clientRect.Bottom -= _tMargins.cyBottomHeight;
-            }
-            else if (!_bPaintWindow)
-            {
-                clientRect.Left = _tMargins.cxLeftWidth;
-                clientRect.Top = _tMargins.cyTopHeight;
-                clientRect.Right -= _tMargins.cxRightWidth;
-                clientRect.Bottom -= _tMargins.cyBottomHeight;
-            }
+            clientRect.Left = _tClientRect.Left - _tMargins.cxLeftWidth;
+            clientRect.Top = _tMargins.cyTopHeight;
+            clientRect.Right -= _tMargins.cxRightWidth;
+            clientRect.Bottom -= _tMargins.cyBottomHeight;
+
+
             if (!_bPaintWindow)
             {
                 int clr;
                 IntPtr hb;
                 using (ClippingRegion cp = new ClippingRegion(hdc, clientRect, rc))
                 {
-                    if (IsAero())
-                    {
-                        FillRect(hdc, ref rc, GetStockObject(BLACK_BRUSH));
-                    }
-                    else
-                    {
-                        clr = ColorTranslator.ToWin32(Color.FromArgb(0xC2, 0xD9, 0xF7));
-                        hb = CreateSolidBrush(clr);
-                        FillRect(hdc, ref clientRect, hb);
-                        DeleteObject(hb);
-                    }
+                    FillRect(hdc, ref rc, GetStockObject(BLACK_BRUSH));
                 }
                 clr = ColorTranslator.ToWin32(this.BackColor);
                 hb = CreateSolidBrush(clr);
@@ -557,48 +528,12 @@ namespace NcRenderer
             {
                 FillRect(hdc, ref rc, GetStockObject(BLACK_BRUSH));
             }
-            if (_bExtendIntoFrame && _bDrawCaption)
-            {
-                Rectangle captionBounds = new Rectangle(4, 4, rc.Right, CaptionHeight);
-                using (Graphics g = Graphics.FromHdc(hdc))
-                {
-                    using (Font fc = new Font("Segoe UI", 12, FontStyle.Regular))
-                    {
-                        SizeF sz = g.MeasureString(this.Text, fc);
-                        int offset = (rc.Right - (int)sz.Width) / 2;
-                        if (offset < 2 * FrameWidth)
-                            offset = 2 * FrameWidth;
-                        captionBounds.X = offset;
-                        captionBounds.Y = 4;
-                        using (StringFormat sf = new StringFormat())
-                        {
-                            sf.HotkeyPrefix = System.Drawing.Text.HotkeyPrefix.None;
-                            sf.FormatFlags = StringFormatFlags.NoWrap;
-                            sf.Alignment = StringAlignment.Near;
-                            sf.LineAlignment = StringAlignment.Near;
-                            using (GraphicsPath path = new GraphicsPath())
-                            {
-                                g.SmoothingMode = SmoothingMode.HighQuality;
-                                path.AddString(this.Text, fc.FontFamily, (int)fc.Style, fc.Size, captionBounds, sf);
-                                g.FillPath(Brushes.Black, path);
-                            }
-                        }
-                    }
-                }
-            }
+
         }
         #endregion
 
         #region WndProc
         protected override void WndProc(ref Message m)
-        {
-            if (_bIsCompatible)
-                CustomProc(ref m);
-            else
-                base.WndProc(ref m);
-        }
-
-        protected void CustomProc(ref Message m)
         {
             switch (m.Msg)
             {
@@ -609,6 +544,7 @@ namespace NcRenderer
                         {
                             _bPainting = true;
                             BeginPaint(m.HWnd, ref ps);
+                            //FillRect(ps.hdc, ref ps.rcPaint, GetStockObject(BLACK_BRUSH));
                             PaintThis(ps.hdc, ps.rcPaint);
                             EndPaint(m.HWnd, ref ps);
                             _bPainting = false;
@@ -622,7 +558,7 @@ namespace NcRenderer
                     }
                 case WM_CREATE:
                     {
-                        GetFrameSize();
+                        //GetFrameSize();
                         FrameChanged();
                         m.Result = MSG_HANDLED;
                         base.WndProc(ref m);
@@ -632,14 +568,11 @@ namespace NcRenderer
                     {
                         if (m.WParam != IntPtr.Zero && m.Result == IntPtr.Zero)
                         {
-                            if (_bExtendIntoFrame)
-                            {
-                                NCCALCSIZE_PARAMS nc = (NCCALCSIZE_PARAMS)Marshal.PtrToStructure(m.LParam, typeof(NCCALCSIZE_PARAMS));
-                                nc.rect0.Top -= (_tMargins.cyTopHeight > CaptionHeight ? CaptionHeight : _tMargins.cyTopHeight);
-                                nc.rect1 = nc.rect0;
-                                Marshal.StructureToPtr(nc, m.LParam, false);
-                                m.Result = (IntPtr)WVR_VALIDRECTS;
-                            }
+                            NCCALCSIZE_PARAMS nc = (NCCALCSIZE_PARAMS)Marshal.PtrToStructure(m.LParam, typeof(NCCALCSIZE_PARAMS));
+                            nc.rect0.Top -= (_tMargins.cyTopHeight > CaptionHeight ? CaptionHeight : _tMargins.cyTopHeight);
+                            nc.rect1 = nc.rect0;
+                            Marshal.StructureToPtr(nc, m.LParam, false);
+                            m.Result = (IntPtr)WVR_VALIDRECTS;
                             base.WndProc(ref m);
                         }
                         else

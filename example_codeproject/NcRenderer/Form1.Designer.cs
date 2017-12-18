@@ -116,9 +116,9 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(32, 152);
+            this.button1.Location = new System.Drawing.Point(89, 137);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(379, 35);
+            this.button1.Size = new System.Drawing.Size(275, 35);
             this.button1.TabIndex = 2;
             this.button1.Text = "Example 2: Extending Frame into the Client";
             this.button1.UseVisualStyleBackColor = true;
@@ -165,7 +165,6 @@
         private System.Windows.Forms.ToolStripButton btnRedo;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
-
     }
 }
 
