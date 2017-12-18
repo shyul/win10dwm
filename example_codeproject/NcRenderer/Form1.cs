@@ -26,6 +26,13 @@ namespace NcRenderer
             //this.Text = String.Empty;
             InitializeComponent();
 
+            Console.WriteLine("SystemInformation.CaptionHeight = " + SystemInformation.CaptionHeight);
+            Console.WriteLine("SystemInformation.BorderSize.Height = " + SystemInformation.BorderSize.Height);
+            Console.WriteLine("SystemInformation.BorderSize.Width = " + SystemInformation.BorderSize.Width);
+            Console.WriteLine("SystemInformation.Border3DSize.Height = " + SystemInformation.Border3DSize.Height);
+            Console.WriteLine("SystemInformation.Border3DSize.Width = " + SystemInformation.Border3DSize.Width);
+            Console.WriteLine("SystemInformation.FixedFrameBorderSize.Height = " + SystemInformation.FixedFrameBorderSize.Height);
+            Console.WriteLine("SystemInformation.FixedFrameBorderSize.Width = " + SystemInformation.FixedFrameBorderSize.Width);
         }
 
         private void Form1_Load(object sender, EventArgs e)
