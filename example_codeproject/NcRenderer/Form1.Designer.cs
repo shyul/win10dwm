@@ -55,7 +55,7 @@
             this.ncToolStrip.Location = new System.Drawing.Point(10, 3);
             this.ncToolStrip.Name = "ncToolStrip";
             this.ncToolStrip.Padding = new System.Windows.Forms.Padding(0);
-            this.ncToolStrip.Size = new System.Drawing.Size(154, 25);
+            this.ncToolStrip.Size = new System.Drawing.Size(123, 25);
             this.ncToolStrip.TabIndex = 1;
             this.ncToolStrip.Text = "Tools";
             // 
@@ -145,6 +145,7 @@
             this.Controls.Add(this.ncToolStrip);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Hello Wold";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ncToolStrip.ResumeLayout(false);
             this.ncToolStrip.PerformLayout();
