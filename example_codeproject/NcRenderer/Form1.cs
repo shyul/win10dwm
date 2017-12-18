@@ -16,7 +16,7 @@ namespace NcRenderer
             ExtendMargins(0, 32, 0, 0, true, true);
             DoubleBuffered = true;
             SetStyle(ControlStyles.ResizeRedraw, true);
-            //this.ControlBox = false;
+            this.ControlBox = false;
             //this.Text = String.Empty;
             InitializeComponent();
 
