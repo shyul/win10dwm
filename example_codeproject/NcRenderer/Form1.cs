@@ -9,20 +9,6 @@ using System.Diagnostics;
 // v1.3
 namespace NcRenderer
 {
-    public class TPanel : Panel
-    {
-        public TPanel()
-        {
-            SetStyle(ControlStyles.SupportsTransparentBackColor, true);
-            SetStyle(ControlStyles.ResizeRedraw, true);
-            DoubleBuffered = true;
-            BackColor = Color.Transparent;
-            Dock = DockStyle.Top;
-            Size = new Size(100, 26);
-        }
-
-    }
-
     public partial class Form1 : Form
     {
         // TPanel tp1 = new TPanel();
@@ -36,12 +22,7 @@ namespace NcRenderer
         {
             DoubleBuffered = true;
             SetStyle(ControlStyles.ResizeRedraw, true);
-
-            //this.ControlBox = false;
-            //this.Text = String.Empty;
             InitializeComponent();
-            //Controls.Add(tp1);
-
             Console.WriteLine("SystemInformation.CaptionHeight = " + SystemInformation.CaptionHeight);
             Console.WriteLine("SystemInformation.BorderSize.Height = " + SystemInformation.BorderSize.Height);
             Console.WriteLine("SystemInformation.BorderSize.Width = " + SystemInformation.BorderSize.Width);
