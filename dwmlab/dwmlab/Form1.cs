@@ -11,13 +11,17 @@ using System.Windows.Forms;
 
 namespace Pacman
 {
+
     public partial class Form1 : Form
     {
         public Form1()
         {
+            TPanel tp1 = new TPanel();
             DoubleBuffered = true;
             SetStyle(ControlStyles.ResizeRedraw, true);
             InitializeComponent();
+
+            Controls.Add(tp1);
 
             Console.WriteLine(SystemInformation.CaptionHeight);
         }
@@ -30,6 +34,8 @@ namespace Pacman
             g.DrawString("I am on the title bar!", new Font("Tahoma", 10, FontStyle.Bold), Brushes.Gray, 0, 4);
             //g.FillEllipse(Brushes.Black, this.Width - 40, this.Height - 40, 80, 80);
         }
+
+
         private const int WVR_ALIGNTOP = 0x0010;
         private const int WVR_ALIGNLEFT = 0x0020;
         private const int WVR_ALIGNBOTTOM = 0x0040;
@@ -116,7 +122,7 @@ namespace Pacman
 
         // Hit test (HTTOPLEFT, ... HTBOTTOMRIGHT)
 
-        private const int TOPEXTENDWIDTH = 62;
+        private const int TOPEXTENDWIDTH = 57;
 
         private static IntPtr HitTestNCA(IntPtr hWnd)
         {
@@ -241,5 +247,27 @@ namespace Pacman
             NativeMethods.FillRect(hdc, ref clientRect, hb);
             DeleteObject(hb);
         }*/
+    }
+
+    public class TPanel : Panel
+    {
+        public TPanel()
+        {
+            //SetStyle(ControlStyles.SupportsTransparentBackColor, true);
+            SetStyle(ControlStyles.ResizeRedraw, true);
+            DoubleBuffered = true;
+            BackColor = Color.Transparent;
+            Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            Size = new Size(484, 400);
+            Location = new Point(0, 57);
+        }
+        protected override void OnPaint(PaintEventArgs pe)
+        {
+            Graphics g = pe.Graphics;
+            g.FillRectangle(new SolidBrush(Color.Wheat), ClientRectangle);
+            g.DrawLine(Pens.Red, ClientRectangle.Left, ClientRectangle.Top, ClientRectangle.Right, ClientRectangle.Bottom);
+            g.DrawString("I am on the title bar!", new Font("Tahoma", 10, FontStyle.Bold), Brushes.Gray, 0, 4);
+            //g.FillEllipse(Brushes.Black, this.Width - 40, this.Height - 40, 80, 80);
+        }
     }
 }
