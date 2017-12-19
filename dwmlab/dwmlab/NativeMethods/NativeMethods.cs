@@ -111,12 +111,19 @@ namespace Pacman
         [DllImport("user32.dll")]
         public static extern int FillRect(IntPtr hDC, [In] ref RECT lprc, IntPtr hbr);
 
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool PtInRect([In] ref RECT lprc, Point pt);
+
         [DllImport("gdi32.dll")]
         public static extern IntPtr GetStockObject(int fnObject);
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetClientRect(IntPtr hWnd, ref RECT r);
+
+        [DllImport("user32.dll")]
+        public static extern bool AdjustWindowRectEx(ref RECT lpRect, uint dwStyle, bool bMenu, uint dwExStyle);
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]

@@ -290,6 +290,8 @@ namespace NcRenderer
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool GetClientRect(IntPtr hWnd, ref RECT r);
 
+
+
         [DllImport("gdi32.dll")]
         private static extern IntPtr CreateSolidBrush(int crColor);
 

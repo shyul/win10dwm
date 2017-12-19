@@ -39,7 +39,7 @@ namespace Pacman
         private const int WVR_REDRAW = (WVR_HREDRAW | WVR_VREDRAW);
         private const int WVR_VALIDRECTS = 0x400;
         private static IntPtr MSG_HANDLED = new IntPtr(0);
-        private MARGINS _tMargins = new MARGINS(0, 0, 62, 0);
+        private MARGINS _tMargins = new MARGINS(0, 0, TOPEXTENDWIDTH, 0);
         private bool m_painting = false;
         private const int BLACK_BRUSH = 4;
 
@@ -102,7 +102,7 @@ namespace Pacman
                             if (NativeMethods.DwmDefWindowProc(m.HWnd, m.Msg, m.WParam, m.LParam, ref res))
                                 m.Result = res;
                             else
-                                m.Result = HitTest();
+                                m.Result = HitTestNCA(Handle);
                         }
                         else
                             base.WndProc(ref m);
@@ -114,12 +114,68 @@ namespace Pacman
             }
         }
 
+        // Hit test (HTTOPLEFT, ... HTBOTTOMRIGHT)
+
+        private const int TOPEXTENDWIDTH = 62;
+
+        private static IntPtr HitTestNCA(IntPtr hWnd)
+        {
+            // Get the point coordinates for the hit test.
+            //POINT ptMouse = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+
+            Point ptMouse = Control.MousePosition;
+
+            // Get the window rectangle.
+            RECT rcWindow = new RECT();
+            NativeMethods.GetWindowRect(hWnd, ref rcWindow); // this.Handle
+
+
+            // Get the frame rectangle, adjusted for the style without a caption.
+            RECT rcFrame = new RECT();
+            NativeMethods.AdjustWindowRectEx(ref rcFrame, WindowStyles.OVERLAPPEDWINDOW & ~WindowStyles.CAPTION, false, 0); // The last is supposed to be NULL
+
+            // Determine if the hit test is for resizing. Default middle (1,1).
+            int uRow = 1;
+            int uCol = 1;
+            bool fOnResizeBorder = false;
+
+            // Determine if the point is at the top or bottom of the window.
+            if (ptMouse.Y >= rcWindow.Top && ptMouse.Y < rcWindow.Top + TOPEXTENDWIDTH)
+            {
+                fOnResizeBorder = (ptMouse.Y < (rcWindow.Top - rcFrame.Top));
+                uRow = 0;
+            }
+            else if (ptMouse.Y < rcWindow.Bottom && ptMouse.Y >= rcWindow.Bottom - 4)
+            {
+                uRow = 2;
+            }
+
+            // Determine if the point is at the left or right of the window.
+            if (ptMouse.X >= rcWindow.Left && ptMouse.X < rcWindow.Left + 4)
+            {
+                uCol = 0; // left side
+            }
+            else if (ptMouse.X < rcWindow.Right && ptMouse.X >= rcWindow.Right - 4)
+            {
+                uCol = 2; // right side
+            }
+
+            IntPtr[,] hitTests = { { NCHITTEST.TOPLEFT, fOnResizeBorder ? NCHITTEST.TOP : NCHITTEST.CAPTION, NCHITTEST.TOPRIGHT },
+                    { NCHITTEST.LEFT, NCHITTEST.NOWHERE, NCHITTEST.RIGHT },
+                    { NCHITTEST.BOTTOMLEFT, NCHITTEST.BOTTOM, NCHITTEST.BOTTOMRIGHT } };
+
+            return hitTests[uRow, uCol];
+        }
+
+        /*
         private IntPtr HitTest()
         {
             RECT windowRect = new RECT();
-            Point cursorPoint = new Point();
+            Point cursorPoint = Control.MousePosition;
             RECT posRect;
-            NativeMethods.GetCursorPos(ref cursorPoint);
+
+            //Point Pt = PointToClient(Control.MousePosition);
+
             NativeMethods.GetWindowRect(this.Handle, ref windowRect);
             cursorPoint.X -= windowRect.Left;
             cursorPoint.Y -= windowRect.Top;
@@ -127,43 +183,43 @@ namespace Pacman
             int height = windowRect.Bottom - windowRect.Top;
 
             posRect = new RECT(0, 0, FrameWidth, FrameHeight);
-            if (PtInRect(ref posRect, cursorPoint))
-                return HIT_CONSTANTS.HTTOPLEFT;
+            if (NativeMethods.PtInRect(ref posRect, cursorPoint))
+                return NCHITTEST.TOPLEFT;
 
             posRect = new RECT(width - FrameWidth, 0, width, FrameHeight);
-            if (PtInRect(ref posRect, cursorPoint))
-                return HIT_CONSTANTS.HTTOPRIGHT;
+            if (NativeMethods.PtInRect(ref posRect, cursorPoint))
+                return NCHITTEST.TOPRIGHT;
 
             posRect = new RECT(FrameWidth, 0, width - (FrameWidth * 2) - _iFrameOffset, FrameHeight);
-            if (PtInRect(ref posRect, cursorPoint))
-                return HIT_CONSTANTS.HTTOP;
+            if (NativeMethods.PtInRect(ref posRect, cursorPoint))
+                return NCHITTEST.TOP;
 
             posRect = new RECT(FrameWidth, FrameHeight, width - ((FrameWidth * 2) + _iFrameOffset), _tMargins.cyTopHeight);
-            if (PtInRect(ref posRect, cursorPoint))
-                return HIT_CONSTANTS.HTCAPTION;
+            if (NativeMethods.PtInRect(ref posRect, cursorPoint))
+                return NCHITTEST.CAPTION;
 
             posRect = new RECT(0, FrameHeight, FrameWidth, height - FrameHeight);
-            if (PtInRect(ref posRect, cursorPoint))
-                return HIT_CONSTANTS.HTLEFT;
+            if (NativeMethods.PtInRect(ref posRect, cursorPoint))
+                return NCHITTEST.LEFT;
 
             posRect = new RECT(0, height - FrameHeight, FrameWidth, height);
-            if (PtInRect(ref posRect, cursorPoint))
-                return HIT_CONSTANTS.HTBOTTOMLEFT;
+            if (NativeMethods.PtInRect(ref posRect, cursorPoint))
+                return NCHITTEST.BOTTOMLEFT;
 
             posRect = new RECT(FrameWidth, height - FrameHeight, width - FrameWidth, height);
-            if (PtInRect(ref posRect, cursorPoint))
-                return HIT_CONSTANTS.HTBOTTOM;
+            if (NativeMethods.PtInRect(ref posRect, cursorPoint))
+                return NCHITTEST.BOTTOM;
 
             posRect = new RECT(width - FrameWidth, height - FrameHeight, width, height);
-            if (PtInRect(ref posRect, cursorPoint))
-                return HIT_CONSTANTS.HTBOTTOMRIGHT;
+            if (NativeMethods.PtInRect(ref posRect, cursorPoint))
+                return NCHITTEST.BOTTOMRIGHT;
 
             posRect = new RECT(width - FrameWidth, FrameHeight, width, height - FrameHeight);
-            if (PtInRect(ref posRect, cursorPoint))
-                return HIT_CONSTANTS.HTRIGHT;
+            if (NativeMethods.PtInRect(ref posRect, cursorPoint))
+                return NCHITTEST.RIGHT;
 
-            return HIT_CONSTANTS.HTCLIENT;
-        }
+            return NCHITTEST.CLIENT;
+        }*/
         /*
         private void PaintThis(IntPtr hdc, RECT rc)
         {
