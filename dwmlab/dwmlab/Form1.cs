@@ -20,12 +20,12 @@ namespace Pacman
             TPanel tp1 = new TPanel();
             DoubleBuffered = true;
             SetStyle(ControlStyles.ResizeRedraw, true);
+            Font = new Font("Segoe UI", 10, FontStyle.Bold);
             InitializeComponent();
 
             tp1.Location = new Point(0, TOPEXTENDWIDTH);
             tp1.Size = new Size(ClientRectangle.Size.Width, ClientRectangle.Size.Height - TOPEXTENDWIDTH);
 
-            button1.BackColor = Color.Transparent;
 
             bt1.Location = new Point(2, 2);
             bt1.Size = new Size(20, 20);
@@ -74,21 +74,21 @@ namespace Pacman
 
             Graphics g = Graphics.FromHdc(ps.hdc);
             g.SmoothingMode = SmoothingMode.HighQuality;
-            //g.CompositingQuality = CompositingQuality.HighQuality;
             g.SmoothingMode = SmoothingMode.AntiAlias;
+
             if (WindowState == FormWindowState.Maximized)
             {
                 g.DrawLine(Pens.Red, 0, 8, 100, 100);
                 Rectangle rcx = new Rectangle(300, 8, 100, 20);
                 g.FillRectangle(Brushes.DarkOrange, rcx);
-                g.DrawString("U1234504", Font, Brushes.Black, rcx, TabTextFormat);
+                g.DrawString("U1234504", Font, Brushes.White, rcx, TabTextFormat);
             }
             else
             {
                 g.DrawLine(Pens.Red, 0, 0, 100, 100);
                 Rectangle rcx = new Rectangle(300, 1, 100, 20);
                 g.FillRectangle(Brushes.DarkOrange, rcx);
-                g.DrawString("U1234504", Font, Brushes.Black, rcx, TabTextFormat);
+                g.DrawString("U1234504", Font, Brushes.White, rcx, TabTextFormat);
             }
 
             NativeMethods.EndPaint(HWnd, ref ps);
@@ -148,9 +148,15 @@ namespace Pacman
                         {
                             IntPtr res = IntPtr.Zero;
                             if (NativeMethods.DwmDefWindowProc(m.HWnd, m.Msg, m.WParam, m.LParam, ref res))
+                            {
                                 m.Result = res;
+                            }
                             else
+                            {
                                 m.Result = HitTestNCA(Handle);
+                                //Console.WriteLine(res.ToString());
+                                //m.Result = res;
+                            }
                         }
                         else
                             base.WndProc(ref m);
@@ -185,18 +191,7 @@ namespace Pacman
             // Determine if the hit test is for resizing. Default middle (1,1).
             int uRow = 1;
             int uCol = 1;
-            bool fOnResizeBorder = false;
-
-            // Determine if the point is at the top or bottom of the window.
-            if (ptMouse.Y >= rcWindow.Top && ptMouse.Y < rcWindow.Top + TOPEXTENDWIDTH)
-            {
-                fOnResizeBorder = (ptMouse.Y < (rcWindow.Top - rcFrame.Top));
-                uRow = 0;
-            }
-            else if (ptMouse.Y < rcWindow.Bottom && ptMouse.Y >= rcWindow.Bottom - EDGEGRIPWIDTH)
-            {
-                uRow = 2;
-            }
+            //bool fOnResizeBorder = false;
 
             // Determine if the point is at the left or right of the window.
             if (ptMouse.X >= rcWindow.Left && ptMouse.X < rcWindow.Left + EDGEGRIPWIDTH)
@@ -208,87 +203,29 @@ namespace Pacman
                 uCol = 2; // right side
             }
 
-            IntPtr[,] hitTests = { { NCHITTEST.TOPLEFT, fOnResizeBorder ? NCHITTEST.TOP : NCHITTEST.CAPTION, NCHITTEST.TOPRIGHT },
-                    { NCHITTEST.LEFT, NCHITTEST.NOWHERE, NCHITTEST.RIGHT },
-                    { NCHITTEST.BOTTOMLEFT, NCHITTEST.BOTTOM, NCHITTEST.BOTTOMRIGHT } };
+            // Determine if the point is at the top or bottom of the window.
+            if (ptMouse.Y >= rcWindow.Top && ptMouse.Y < rcWindow.Top + TOPEXTENDWIDTH)
+            {
+                if (ptMouse.Y < (rcWindow.Top - rcFrame.Top))
+                {
+                    uRow = 0;
+                }
+                else if(uCol == 1)
+                {
+                    return NCHITTEST.CAPTION;
+                }
+            }
+            else if (ptMouse.Y < rcWindow.Bottom && ptMouse.Y >= rcWindow.Bottom - EDGEGRIPWIDTH)
+            {
+                uRow = 2;
+            }
+
+            IntPtr[,] hitTests =  { { NCHITTEST.TOPLEFT,    NCHITTEST.TOP,      NCHITTEST.TOPRIGHT },
+                                    { NCHITTEST.LEFT,       NCHITTEST.NOWHERE,  NCHITTEST.RIGHT },
+                                    { NCHITTEST.BOTTOMLEFT, NCHITTEST.BOTTOM,   NCHITTEST.BOTTOMRIGHT } };
 
             return hitTests[uRow, uCol];
         }
-
-        /*
-        private IntPtr HitTest()
-        {
-            RECT windowRect = new RECT();
-            Point cursorPoint = Control.MousePosition;
-            RECT posRect;
-
-            //Point Pt = PointToClient(Control.MousePosition);
-
-            NativeMethods.GetWindowRect(this.Handle, ref windowRect);
-            cursorPoint.X -= windowRect.Left;
-            cursorPoint.Y -= windowRect.Top;
-            int width = windowRect.Right - windowRect.Left;
-            int height = windowRect.Bottom - windowRect.Top;
-
-            posRect = new RECT(0, 0, FrameWidth, FrameHeight);
-            if (NativeMethods.PtInRect(ref posRect, cursorPoint))
-                return NCHITTEST.TOPLEFT;
-
-            posRect = new RECT(width - FrameWidth, 0, width, FrameHeight);
-            if (NativeMethods.PtInRect(ref posRect, cursorPoint))
-                return NCHITTEST.TOPRIGHT;
-
-            posRect = new RECT(FrameWidth, 0, width - (FrameWidth * 2) - _iFrameOffset, FrameHeight);
-            if (NativeMethods.PtInRect(ref posRect, cursorPoint))
-                return NCHITTEST.TOP;
-
-            posRect = new RECT(FrameWidth, FrameHeight, width - ((FrameWidth * 2) + _iFrameOffset), _tMargins.cyTopHeight);
-            if (NativeMethods.PtInRect(ref posRect, cursorPoint))
-                return NCHITTEST.CAPTION;
-
-            posRect = new RECT(0, FrameHeight, FrameWidth, height - FrameHeight);
-            if (NativeMethods.PtInRect(ref posRect, cursorPoint))
-                return NCHITTEST.LEFT;
-
-            posRect = new RECT(0, height - FrameHeight, FrameWidth, height);
-            if (NativeMethods.PtInRect(ref posRect, cursorPoint))
-                return NCHITTEST.BOTTOMLEFT;
-
-            posRect = new RECT(FrameWidth, height - FrameHeight, width - FrameWidth, height);
-            if (NativeMethods.PtInRect(ref posRect, cursorPoint))
-                return NCHITTEST.BOTTOM;
-
-            posRect = new RECT(width - FrameWidth, height - FrameHeight, width, height);
-            if (NativeMethods.PtInRect(ref posRect, cursorPoint))
-                return NCHITTEST.BOTTOMRIGHT;
-
-            posRect = new RECT(width - FrameWidth, FrameHeight, width, height - FrameHeight);
-            if (NativeMethods.PtInRect(ref posRect, cursorPoint))
-                return NCHITTEST.RIGHT;
-
-            return NCHITTEST.CLIENT;
-        }*/
-        /*
-        private void PaintThis(IntPtr hdc, RECT rc)
-        {
-            RECT clientRect = new RECT();
-            NativeMethods.GetClientRect(this.Handle, ref clientRect);
-            clientRect.Left = _tClientRect.Left - _tMargins.cxLeftWidth;
-            clientRect.Top = _tMargins.cyTopHeight;
-            clientRect.Right -= _tMargins.cxRightWidth;
-            clientRect.Bottom -= _tMargins.cyBottomHeight;
-
-            int clr;
-            IntPtr hb;
-            using (ClippingRegion cp = new ClippingRegion(hdc, clientRect, rc))
-            {
-                FillRect(hdc, ref rc, GetStockObject(BLACK_BRUSH));
-            }
-            clr = ColorTranslator.ToWin32(this.BackColor);
-            hb = CreateSolidBrush(clr);
-            NativeMethods.FillRect(hdc, ref clientRect, hb);
-            DeleteObject(hb);
-        }*/
     }
 
     public class TPanel : Panel
@@ -305,8 +242,11 @@ namespace Pacman
         protected override void OnPaint(PaintEventArgs pe)
         {
             Graphics g = pe.Graphics;
+            g.SmoothingMode = SmoothingMode.HighQuality;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+
             g.FillRectangle(new SolidBrush(Color.Wheat), ClientRectangle);
-            g.DrawLine(Pens.Red, ClientRectangle.Left, ClientRectangle.Top, ClientRectangle.Right, ClientRectangle.Bottom);
+            g.DrawLine(Pens.Blue, ClientRectangle.Left, ClientRectangle.Top, ClientRectangle.Right, ClientRectangle.Bottom);
             g.DrawString("I am on the title bar!", new Font("Tahoma", 10, FontStyle.Bold), Brushes.Gray, 0, 4);
         }
     }
@@ -324,6 +264,9 @@ namespace Pacman
         protected override void OnPaint(PaintEventArgs pe)
         {
             Graphics g = pe.Graphics;
+            g.SmoothingMode = SmoothingMode.HighQuality;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+
             g.Clear(Color.Transparent);
             g.DrawLine(Pens.Green, 5, 20, 20, 0);
             //base.OnPaint(e);
