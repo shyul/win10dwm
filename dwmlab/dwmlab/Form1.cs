@@ -41,16 +41,6 @@ namespace Pacman
             Console.WriteLine("SystemInformation.FixedFrameBorderSize.Height = " + SystemInformation.FixedFrameBorderSize.Height);
             Console.WriteLine("SystemInformation.FixedFrameBorderSize.Width = " + SystemInformation.FixedFrameBorderSize.Width);
         }
-        /*
-        protected override void OnPaint(PaintEventArgs pe)
-        {
-            Graphics g = pe.Graphics;
-            g.FillRectangle(new SolidBrush(Color.Wheat), ClientRectangle);
-            g.DrawLine(Pens.Green, ClientRectangle.Left, ClientRectangle.Top, ClientRectangle.Right, ClientRectangle.Bottom);
-            g.DrawString("I am on the title bar!", new Font("Tahoma", 10, FontStyle.Bold), Brushes.Gray, 0, 4);
-            //g.FillEllipse(Brushes.Black, this.Width - 40, this.Height - 40, 80, 80);
-        }*/
-
 
         private const int WVR_ALIGNTOP = 0x0010;
         private const int WVR_ALIGNLEFT = 0x0020;
@@ -137,7 +127,7 @@ namespace Pacman
                             nc.rect0.Top -= SystemInformation.CaptionHeight + 8;// SystemInformation.CaptionHeight + 1;
                             nc.rect1 = nc.rect0;
                             Marshal.StructureToPtr(nc, m.LParam, false);
-                            m.Result = MSG_HANDLED;// (IntPtr)WVR_VALIDRECTS;
+                            m.Result = (IntPtr)WVR_VALIDRECTS; //MSG_HANDLED;// (IntPtr)WVR_VALIDRECTS;
                         }
                         base.WndProc(ref m);
                         break;
