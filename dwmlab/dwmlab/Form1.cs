@@ -42,14 +42,6 @@ namespace Pacman
             Console.WriteLine("SystemInformation.FixedFrameBorderSize.Width = " + SystemInformation.FixedFrameBorderSize.Width);
         }
 
-        private const int WVR_ALIGNTOP = 0x0010;
-        private const int WVR_ALIGNLEFT = 0x0020;
-        private const int WVR_ALIGNBOTTOM = 0x0040;
-        private const int WVR_ALIGNRIGHT = 0x0080;
-        private const int WVR_HREDRAW = 0x0100;
-        private const int WVR_VREDRAW = 0x0200;
-        private const int WVR_REDRAW = (WVR_HREDRAW | WVR_VREDRAW);
-        private const int WVR_VALIDRECTS = 0x400;
         private static IntPtr MSG_HANDLED = new IntPtr(0);
         private MARGINS _tMargins = new MARGINS(0, 0, TOPEXTENDWIDTH, 0);
         private bool m_painting = false;
@@ -127,7 +119,7 @@ namespace Pacman
                             nc.rect0.Top -= SystemInformation.CaptionHeight + 8;// SystemInformation.CaptionHeight + 1;
                             nc.rect1 = nc.rect0;
                             Marshal.StructureToPtr(nc, m.LParam, false);
-                            m.Result = (IntPtr)WVR_VALIDRECTS; //MSG_HANDLED;// (IntPtr)WVR_VALIDRECTS;
+                            m.Result = WVR.VALIDRECTS; //MSG_HANDLED;// (IntPtr)WVR_VALIDRECTS;
                         }
                         base.WndProc(ref m);
                         break;

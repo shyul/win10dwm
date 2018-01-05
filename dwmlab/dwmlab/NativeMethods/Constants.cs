@@ -1028,6 +1028,17 @@ namespace Pacman
         public static IntPtr CLOSE = new IntPtr(20);
         public static IntPtr HELP = new IntPtr(21);
     }
+    public static class WVR
+    {
+        public static IntPtr ALIGNTOP = new IntPtr(0x0010);
+        public static IntPtr ALIGNLEFT = new IntPtr(0x0020);
+        public static IntPtr ALIGNBOTTOM = new IntPtr(0x0040);
+        public static IntPtr ALIGNRIGHT = new IntPtr(0x0080);
+        public static IntPtr HREDRAW = new IntPtr(0x0100);
+        public static IntPtr VREDRAW = new IntPtr(0x0200);
+        public static IntPtr REDRAW = new IntPtr(0x0100 | 0x0200);
+        public static IntPtr VALIDRECTS = new IntPtr(0x400);
+    }
     public static class WindowStyles
     {
         public const uint OVERLAPPED = 0x00000000;
